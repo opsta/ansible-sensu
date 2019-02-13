@@ -3,3 +3,6 @@ sensu_apt_package: sensu
 sensu_apt_key_url: https://sensu.global.ssl.fastly.net/apt/pubkey.gpg
 sensu_deb_url: deb https://sensu.global.ssl.fastly.net/apt {{ ansible_distribution_release }} main
 
+sensu_server_service_name: sensu-server
+sensu_api_service_name: sensu-api
+sensu_client_service_name: sensu-client

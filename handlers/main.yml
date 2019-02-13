@@ -1,15 +1,21 @@
 ---
 - name: Restart sensu server
-  service:
-    name: sensu-server
+  systemd:
+    name: "{{ sensu_server_service_name }}"
     state: restarted
+    enabled: yes
+  notify: Restart sensu client
 
 - name: Restart sensu api
-  service:
-    name: sensu-api
+  systemd:
+    name: "{{ sensu_api_service_name }}"
     state: restarted
+    enabled: yes
+  notify: Restart sensu client
 
 - name: Restart sensu client
-  service:
-    name: sensu-client
+  systemd:
+    name: "{{ sensu_client_service_name }}"
     state: restarted
+    enabled: yes
+  when: inventory_hostname in groups['sensu-client']

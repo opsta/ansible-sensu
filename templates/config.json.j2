@@ -1,29 +1,41 @@
 {
+{% if inventory_hostname in groups['sensu-server'] %}
+  "redis": 
+    {
+{% if sensu_redis_password %}
+      "password": "{{ sensu_redis_password }}",
+{% endif %} {# sensu_redis_password #}
+{% if sensu_redis_sentinels %}
+      "sentinels": {{ sensu_redis_sentinels | to_nice_json(indent=8) }},
+      "master": "{{ sensu_redis_master_name }}"
+{% else %}
+      "host": "{{ sensu_redis_host }}",
+      "port": {{ sensu_redis_port }}
+{% endif %} {# sensu_redis_sentinels #}
+    }
+  ,
 {% if sensu_api %}
   "api": {{ sensu_api | to_nice_json(indent=6) }}
   ,
-{% endif %}
-{% if sensu_client %}
-  "client": {{ sensu_client | to_nice_json(indent=6) }} 
-  ,
-{% endif %}
+{% endif %} {# sensu_api #}
 {% if sensu_handlers %}
   "handlers": {{ sensu_handlers | to_nice_json(indent=6) }}
   ,
-{% endif %}
+{% endif %} {# sensu_handlers #}
 {% if sensu_handler_plugins %}
 {% for key, value in sensu_handler_plugins.iteritems() %}
   "{{ key }}": {{ value | to_nice_json(indent=6) }},
 {% endfor %}
-{% endif %}
+{% endif %} {# sensu_handler_plugins #}
 {% if sensu_filters %}
   "filters": {{ sensu_filters | to_nice_json(indent=6) }}
   ,
-{% endif %}
+{% endif %} {# sensu_filters #}
 {% if sensu_checks %}
   "checks": {{ sensu_checks | to_nice_json(indent=6) }}
   ,
-{% endif %}
+{% endif %} {# sensu_checks #}
+{% if not inventory_hostname in groups['sensu-client'] %}
   "rabbitmq": 
     {
 {% if sensu_rabbitmq_ssl %}
@@ -31,27 +43,38 @@
         "cert_chain_file": "{{ sensu_rabbitmq_cert_file }}",
         "private_key_file": "{{ sensu_rabbitmq_key_file }}"
       },
-{% endif %}
+{% endif %} {# sensu_rabbitmq_ssl #}
 {% if sensu_rabbitmq_username and sensu_rabbitmq_password %}
       "user": "{{ sensu_rabbitmq_username }}",
       "password": "{{ sensu_rabbitmq_password }}",
-{% endif %}
+{% endif %} {# sensu_rabbitmq_user and sensu_rabbitmq_password #}
       "host": "{{ sensu_rabbitmq_host }}",
       "port": {{ sensu_rabbitmq_port }},
       "vhost": "{{ sensu_rabbitmq_vhost }}"
     }
+{% endif %} {# not inventory_hostname in groups['sensu-client'] #}
+{% endif %} {# inventory_hostname in groups['sensu-server'] #}
+
+{% if inventory_hostname in groups['sensu-client'] %}
+{% if sensu_client %}
+  "client": {{ sensu_client | to_nice_json(indent=6) }} 
   ,
-  "redis": 
+{% endif %} {# sensu_client #}
+  "rabbitmq": 
     {
-{% if sensu_redis_password %}
-      "password": "{{ sensu_redis_password }}",
-{% endif %}
-{% if sensu_redis_sentinels %}
-      "sentinels": {{ sensu_redis_sentinels | to_nice_json(indent=8) }},
-      "master": "{{ sensu_redis_master_name }}"
-{% else %}
-      "host": "{{ sensu_redis_host }}",
-      "port": {{ sensu_redis_port }}
-{% endif %}
+{% if sensu_rabbitmq_ssl %}
+      "ssl": {
+        "cert_chain_file": "{{ sensu_rabbitmq_cert_file }}",
+        "private_key_file": "{{ sensu_rabbitmq_key_file }}"
+      },
+{% endif %} {# sensu_rabbitmq_ssl #}
+{% if sensu_rabbitmq_username and sensu_rabbitmq_password %}
+      "user": "{{ sensu_rabbitmq_username }}",
+      "password": "{{ sensu_rabbitmq_password }}",
+{% endif %} {# sensu_rabbitmq_username and sensu_rabbitmq_password #}
+      "host": "{{ sensu_rabbitmq_host }}",
+      "port": {{ sensu_rabbitmq_port }},
+      "vhost": "{{ sensu_rabbitmq_vhost }}"
     }
+{% endif %} {# inventory_hostname in groups[sensu-client'] #}
 }

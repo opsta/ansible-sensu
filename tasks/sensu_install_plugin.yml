@@ -2,4 +2,3 @@
 - name: Install sensu plugins
   command: "sensu-install -p {{ item }}"
   with_items: "{{ sensu_plugins }}"
-  

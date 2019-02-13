@@ -5,8 +5,8 @@ sensu_search_config_paths: []
 sensu_host_config_file_path: "{{ sensu_host_config_path | default(inventory_hostname) }}/config.json.j2"
 sensu_host_config_ssl_path: "{{ sensu_host_config_path | default(inventory_hostname) }}/ssl"
 sensu_config_base_path: /etc/sensu
-sensu_config_path: /etc/sensu/conf.d
-sensu_config_file_path: /etc/sensu/config.json
+sensu_config_path: "{{ sensu_config_base_path }}/conf.d"
+sensu_config_file_path: "{{ sensu_config_base_path }}/config.json"
 
 sensu_apt_dependencies:
   - apt-transport-https
@@ -16,14 +16,6 @@ sensu_apt_dependencies:
 sensu_plugins:
   - sensu-plugins-http
   - sensu-plugins-slack
-
-# AIO
-sensu_all_in_one: false
-
-# Service name
-sensu_server_service_name: sensu-server
-sensu_api_service_name: sensu-api
-sensu_client_service_name: sensu-client
 
 # RabbitMQ settings
 sensu_rabbitmq_host: localhost

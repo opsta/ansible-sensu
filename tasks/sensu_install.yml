@@ -7,13 +7,24 @@
   with_items:
     - "{{ sensu_apt_package }}"
     - "{{ sensu_apt_dependencies }}"
+      
+- name: Ensure Sensu stay on "Server" mode only
+  systemd:
+    name: "{{ sensu_client_service_name }}"
+    state: stopped
+    enabled: no
+  when: 
+    - inventory_hostname in groups['sensu-server']
+    - not inventory_hostname in groups['sensu-client']
 
-- name: Ensure service enable
-  service:
+- name: Ensure Sensu stay on "Client" mode only
+  systemd:
     name: "{{ item }}"
-    enabled: yes
-    state: started
+    state: stopped
+    enabled: no
   with_items:
-    - sensu-server
-    - sensu-api
-    - sensu-client
+    - "{{ sensu_server_service_name }}"
+    - "{{ sensu_api_service_name }}"
+  when: 
+    - not inventory_hostname in groups['sensu-server']
+    - inventory_hostname in groups['sensu-client']
