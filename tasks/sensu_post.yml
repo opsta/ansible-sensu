@@ -1,70 +1,37 @@
 ---
-- block: # Mode: Server
+- name: Copy sensu configuration file
+  template:
+    src: "{{ sensu_host_config_file_path }}"
+    dest: "{{ sensu_config_file_path }}"
+    owner: root
+    group: root
+    mode: 0644
+    validate: /opt/sensu/bin/sensu-server --validate_config -c %s
+  when: sensu_config_check.stat.exists
+  notify: 
+    - Restart sensu server
+    - Restart sensu api
+    - Restart sensu client
 
-  - name: Copy sensu configuration file
-    template:
-      src: "{{ sensu_host_config_file_path }}"
-      dest: "{{ sensu_config_file_path }}"
-      owner: root
-      group: root
-      mode: 0644
-      validate: /opt/sensu/bin/sensu-server --validate_config -c %s
-    when: sensu_config_check.stat.exists
-    notify: 
-      - Restart sensu server
-      - Restart sensu api
-
-  - name: Copy SSL certificates directory
-    copy:
-      src: "{{ sensu_host_config_path }}/ssl"
-      dest: "{{ sensu_config_path }}/"
-    when:
-      - sensu_config_ssl_check.stat.isdir is defined
-      - sensu_config_ssl_check.stat.isdir
-    notify: 
-      - Restart sensu server
-      - Restart sensu api
-
-  - name: Generate Sensu configuration file(s) from template
-    template:
-      src: config.json.j2
-      dest: "{{ sensu_config_file_path }}"
-      validate: /opt/sensu/bin/sensu-server --validate_config -c %s
-    when: not sensu_config_check.stat.exists
-    notify: 
-      - Restart sensu server
-      - Restart sensu api
-
-  when: inventory_hostname in groups['sensu-server']
-
-- block: # Mode: Client
-
-  - name: Copy sensu configuration file
-    template:
-      src: "{{ sensu_host_config_file_path }}"
-      dest: "{{ sensu_config_file_path }}"
-      owner: root
-      group: root
-      mode: 0644
-      validate: /opt/sensu/bin/sensu-client --validate_config -c %s
-    when: sensu_config_check.stat.exists
-    notify: Restart sensu client
-
-  - name: Copy SSL certificates directory
-    copy:
-      src: "{{ sensu_host_config_path }}/ssl"
-      dest: "{{ sensu_config_path }}/"
-    when:
-      - sensu_config_ssl_check.stat.isdir is defined
-      - sensu_config_ssl_check.stat.isdir
-    notify: Restart sensu client
-
-  - name: Generate Sensu configuration file(s) from template
-    template:
-      src: config.json.j2
-      dest: "{{ sensu_config_file_path }}"
-      validate: /opt/sensu/bin/sensu-client --validate_config -c %s
-    when: not sensu_config_check.stat.exists
-    notify: Restart sensu client
-
-  when: inventory_hostname in groups['sensu-client']
+- name: Copy SSL certificates directory
+  copy:
+    src: "{{ sensu_host_config_path }}/ssl"
+    dest: "{{ sensu_config_path }}/"
+  when:
+    - sensu_config_ssl_check.stat.isdir is defined
+    - sensu_config_ssl_check.stat.isdir
+  notify: 
+    - Restart sensu server
+    - Restart sensu api
+    - Restart sensu client
+      
+- name: Generate Sensu configuration file(s) from template
+  template:
+    src: config.json.j2
+    dest: "{{ sensu_config_file_path }}"
+    validate: /opt/sensu/bin/sensu-server --validate_config -c %s
+  when: not sensu_config_check.stat.exists
+  notify: 
+    - Restart sensu server
+    - Restart sensu api
+    - Restart sensu client

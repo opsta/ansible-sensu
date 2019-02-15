@@ -4,18 +4,26 @@
     name: "{{ sensu_server_service_name }}"
     state: restarted
     enabled: yes
-  notify: Restart sensu client
+  when:
+    - sensu_api
+    - sensu_redis
+    - sensu_rabbitmq
 
 - name: Restart sensu api
   systemd:
     name: "{{ sensu_api_service_name }}"
     state: restarted
     enabled: yes
-  notify: Restart sensu client
+  when:
+    - sensu_api
+    - sensu_redis
+    - sensu_rabbitmq
 
 - name: Restart sensu client
   systemd:
     name: "{{ sensu_client_service_name }}"
     state: restarted
     enabled: yes
-  when: inventory_hostname in groups['sensu-client']
+  when:
+    - sensu_rabbitmq
+    - sensu_client

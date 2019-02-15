@@ -1,29 +1,27 @@
 {
-{% if inventory_hostname in groups['sensu-server'] %}
-  "redis": 
-    {
-{% if sensu_redis_password %}
-      "password": "{{ sensu_redis_password }}",
-{% endif %} {# sensu_redis_password #}
-{% if sensu_redis_sentinels %}
-      "sentinels": {{ sensu_redis_sentinels | to_nice_json(indent=8) }},
-      "master": "{{ sensu_redis_master_name }}"
-{% else %}
-      "host": "{{ sensu_redis_host }}",
-      "port": {{ sensu_redis_port }}
-{% endif %} {# sensu_redis_sentinels #}
-    }
-  ,
 {% if sensu_api %}
   "api": {{ sensu_api | to_nice_json(indent=6) }}
   ,
-{% endif %} {# sensu_api #}
+  "redis": 
+    {
+{% if sensu_redis.password is defined %}
+      "password": "{{ sensu_redis.password }}",
+{% endif %} {# sensu_redis.password is defined #}
+{% if sensu_redis.sentinels is defined %}
+      "sentinels": {{ sensu_redis.sentinels | to_nice_json(indent=8) }},
+      "master": "{{ sensu_redis.master_name }}"
+{% else %}
+      "host": "{{ sensu_redis.host }}",
+      "port": {{ sensu_redis.port }}
+{% endif %} {# sensu_redis.sentinels  is defined#}
+    }
+  ,
 {% if sensu_handlers %}
   "handlers": {{ sensu_handlers | to_nice_json(indent=6) }}
   ,
 {% endif %} {# sensu_handlers #}
 {% if sensu_handler_plugins %}
-{% for key, value in sensu_handler_plugins.iteritems() %}
+{% for key, value in sensu_handler_plugins.items() %}
   "{{ key }}": {{ value | to_nice_json(indent=6) }},
 {% endfor %}
 {% endif %} {# sensu_handler_plugins #}
@@ -35,46 +33,43 @@
   "checks": {{ sensu_checks | to_nice_json(indent=6) }}
   ,
 {% endif %} {# sensu_checks #}
-{% if not inventory_hostname in groups['sensu-client'] %}
+{% if not sensu_client %}
   "rabbitmq": 
     {
-{% if sensu_rabbitmq_ssl %}
+{% if sensu_rabbitmq.ssl is defined %}
       "ssl": {
-        "cert_chain_file": "{{ sensu_rabbitmq_cert_file }}",
-        "private_key_file": "{{ sensu_rabbitmq_key_file }}"
+        "cert_chain_file": "{{ sensu_rabbitmq.cert_file }}",
+        "private_key_file": "{{ sensu_rabbitmq.key_file }}"
       },
-{% endif %} {# sensu_rabbitmq_ssl #}
-{% if sensu_rabbitmq_username and sensu_rabbitmq_password %}
-      "user": "{{ sensu_rabbitmq_username }}",
-      "password": "{{ sensu_rabbitmq_password }}",
-{% endif %} {# sensu_rabbitmq_user and sensu_rabbitmq_password #}
-      "host": "{{ sensu_rabbitmq_host }}",
-      "port": {{ sensu_rabbitmq_port }},
-      "vhost": "{{ sensu_rabbitmq_vhost }}"
+{% endif %} {# sensu_rabbitmq.ssl is defined #}
+{% if sensu_rabbitmq.username and sensu_rabbitmq.password %}
+      "user": "{{ sensu_rabbitmq.username }}",
+      "password": "{{ sensu_rabbitmq.password }}",
+{% endif %} {# sensu_rabbitmq.user and sensu_rabbitmq.password #}
+      "host": "{{ sensu_rabbitmq.host }}",
+      "port": {{ sensu_rabbitmq.port }},
+      "vhost": "{{ sensu_rabbitmq.vhost }}"
     }
-{% endif %} {# not inventory_hostname in groups['sensu-client'] #}
-{% endif %} {# inventory_hostname in groups['sensu-server'] #}
-
-{% if inventory_hostname in groups['sensu-client'] %}
+{% endif %} {# not sensu_client #}
+{% endif %} {# sensu_api #}
 {% if sensu_client %}
   "client": {{ sensu_client | to_nice_json(indent=6) }} 
   ,
-{% endif %} {# sensu_client #}
   "rabbitmq": 
     {
-{% if sensu_rabbitmq_ssl %}
+{% if sensu_rabbitmq.ssl is defined and sensu_rabbitmq.ssl %}
       "ssl": {
-        "cert_chain_file": "{{ sensu_rabbitmq_cert_file }}",
-        "private_key_file": "{{ sensu_rabbitmq_key_file }}"
+        "cert_chain_file": "{{ sensu_rabbitmq.cert_file }}",
+        "private_key_file": "{{ sensu_rabbitmq.key_file }}"
       },
-{% endif %} {# sensu_rabbitmq_ssl #}
-{% if sensu_rabbitmq_username and sensu_rabbitmq_password %}
-      "user": "{{ sensu_rabbitmq_username }}",
-      "password": "{{ sensu_rabbitmq_password }}",
-{% endif %} {# sensu_rabbitmq_username and sensu_rabbitmq_password #}
-      "host": "{{ sensu_rabbitmq_host }}",
-      "port": {{ sensu_rabbitmq_port }},
-      "vhost": "{{ sensu_rabbitmq_vhost }}"
+{% endif %} {# sensu_rabbitmq.ssl is defined and sensu_rabbitmq.ssl #}
+{% if sensu_rabbitmq.username is defined and sensu_rabbitmq.password is defined %}
+      "user": "{{ sensu_rabbitmq.username }}",
+      "password": "{{ sensu_rabbitmq.password }}",
+{% endif %} {# sensu_rabbitmq.user is defined and sensu_rabbitmq.password is defined #}
+      "host": "{{ sensu_rabbitmq.host }}",
+      "port": {{ sensu_rabbitmq.port }},
+      "vhost": "{{ sensu_rabbitmq.vhost }}"
     }
-{% endif %} {# inventory_hostname in groups[sensu-client'] #}
+{% endif %} {# sensu_client and not sensu_api #}
 }

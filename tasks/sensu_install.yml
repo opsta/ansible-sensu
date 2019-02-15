@@ -14,8 +14,10 @@
     state: stopped
     enabled: no
   when: 
-    - inventory_hostname in groups['sensu-server']
-    - not inventory_hostname in groups['sensu-client']
+    - sensu_api
+    - sensu_redis
+    - sensu_rabbitmq
+    - not sensu_client
 
 - name: Ensure Sensu stay on "Client" mode only
   systemd:
@@ -25,6 +27,8 @@
   with_items:
     - "{{ sensu_server_service_name }}"
     - "{{ sensu_api_service_name }}"
-  when: 
-    - not inventory_hostname in groups['sensu-server']
-    - inventory_hostname in groups['sensu-client']
+  when:
+    - not sensu_api
+    - not sensu_redis
+    - sensu_rabbitmq
+    - sensu_client
