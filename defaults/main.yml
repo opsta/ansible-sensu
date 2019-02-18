@@ -8,6 +8,10 @@ sensu_config_base_path: /etc/sensu
 sensu_config_path: "{{ sensu_config_base_path }}/conf.d"
 sensu_config_file_path: "{{ sensu_config_base_path }}/config.json"
 
+# Install Sensu and dependencies of Sensu (RabbitMQ, Redis)
+# NOTE: sensu_all_in_one use only in a playbook.
+sensu_all_in_one: false
+
 # Some cases, you have to install some packages for your sensu-plugins
 # If you use sensu_apt_dependencies please keep following packages on
 # sensu_apt_dependencies variable
