@@ -7,7 +7,7 @@
   with_items:
     - "{{ sensu_apt_package }}"
     - "{{ sensu_apt_dependencies }}"
-  when: "{{ ansible_os_family | lower }}" == "debian"
+  when: "{{ ansible_os_family | lower }} == 'debian'"
 
 - name: Install sensu packages on Redhat
   yum:
@@ -16,7 +16,7 @@
   with_items:
     - "{{ sensu_rpm_package }}"
     - "{{ sensu_rpm_dependencies }}"
-  when: "{{ ansible_os_family | lower }}" == "redhat"
+  when: "{{ ansible_os_family | lower }} == 'redhat'"
       
 - name: Ensure Sensu stay on "Server" mode only
   systemd:
