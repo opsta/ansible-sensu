@@ -1,10 +1,31 @@
 ---
-- name: Add sensu repository key
-  apt_key:
-    url: "{{ sensu_apt_key_url }}"
-    state: present
+- block: # Debian
 
-- name: Install sensu apt repository
-  apt_repository:
-    repo: "{{ sensu_deb_url }}"
-    state: present
+  - name: Add sensu repository key
+    apt_key:
+      url: "{{ sensu_apt_key_url }}"
+      state: present
+
+  - name: Install sensu apt repository
+    apt_repository:
+      filename: Sensu
+      repo: "{{ sensu_deb_url }}"
+      state: present
+  
+  when: ansible_os_family == "Debian"
+
+- block: # Redhat
+
+  - name: add sensu repository key
+    rpm_key:
+      key: "{{ sensu_rpm_key_url }}"
+      state: present
+
+  - name: install sensu apt repository
+    yum_repository:
+      name: sensu
+      descriptiom: sensu repository for redhat
+      base_url: "{{ sensu_rpm_url }}"
+      state: present
+
+  when: ansible_os_family == "Redhat"

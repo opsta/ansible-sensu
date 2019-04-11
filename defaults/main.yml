@@ -18,6 +18,7 @@ sensu_all_in_one: false
 sensu_apt_dependencies:
   - apt-transport-https
   - build-essential
+sensu_rpm_dependencies: []
 
 # Sensu installation mode 
 # You cand choose you installtion on this ansible roles
