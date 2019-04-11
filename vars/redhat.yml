@@ -1,0 +1,8 @@
+---
+sensu_yum_package: sensu
+sensu_rpm_key_url: https://repositories.sensuapp.org/yum/pubkey.gpg
+sensu_rpm_url: https://sensu.global.ssl.fastly.net/yum/$releasever/$basearch/
+
+sensu_server_service_name: sensu-server
+sensu_api_service_name: sensu-api
+sensu_client_service_name: sensu-client
