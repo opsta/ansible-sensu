@@ -1,34 +1,71 @@
 ---
-- name: Install sensu packages
-  apt:
-    name: "{{ item }}"
-    state: present
-    update_cache: yes
-  with_items:
-    - "{{ sensu_apt_package }}"
-    - "{{ sensu_apt_dependencies }}"
+- block: # Debian
+  - name: Install sensu packages on Debian
+    apt:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+    with_items:
+      - "{{ sensu_apt_package }}"
+      - "{{ sensu_apt_dependencies }}"
       
-- name: Ensure Sensu stay on "Server" mode only
-  systemd:
-    name: "{{ sensu_client_service_name }}"
-    state: stopped
-    enabled: no
-  when: 
-    - sensu_api
-    - sensu_redis
-    - sensu_rabbitmq
-    - not sensu_client
+  - name: Ensure Sensu stay on "Server" mode only
+    systemd:
+      name: "{{ sensu_client_service_name }}"
+      state: stopped
+      enabled: no
+    when: 
+      - sensu_api
+      - sensu_redis
+      - sensu_rabbitmq
+      - not sensu_client
 
-- name: Ensure Sensu stay on "Client" mode only
-  systemd:
-    name: "{{ item }}"
-    state: stopped
-    enabled: no
-  with_items:
-    - "{{ sensu_server_service_name }}"
-    - "{{ sensu_api_service_name }}"
-  when:
-    - not sensu_api
-    - not sensu_redis
-    - sensu_rabbitmq
-    - sensu_client
+  - name: Ensure Sensu stay on "Client" mode only
+    systemd:
+      name: "{{ item }}"
+      state: stopped
+      enabled: no
+    with_items:
+      - "{{ sensu_server_service_name }}"
+      - "{{ sensu_api_service_name }}"
+    when:
+      - not sensu_api
+      - not sensu_redis
+      - sensu_rabbitmq
+      - sensu_client
+  when: ansible_os_family == "Debian"
+
+- block: # RedHat
+  - name: Install sensu packages on Redhat
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - "{{ sensu_yum_package }}"
+      - "{{ sensu_yum_dependencies }}"
+      
+  - name: Ensure Sensu stay on "Server" mode only
+    systemd:
+      name: "{{ sensu_client_service_name }}"
+      state: stopped
+      enabled: no
+    when: 
+      - sensu_api
+      - sensu_redis
+      - sensu_rabbitmq
+      - not sensu_client
+
+  - name: Ensure Sensu stay on "Client" mode only
+    systemd:
+      name: "{{ item }}"
+      state: stopped
+      enabled: no
+    with_items:
+      - "{{ sensu_server_service_name }}"
+      - "{{ sensu_api_service_name }}"
+    when:
+      - not sensu_api
+      - not sensu_redis
+      - sensu_rabbitmq
+      - sensu_client
+  when: ansible_os_family == "RedHat"
