@@ -8,17 +8,17 @@ sensu_config_base_path: /etc/sensu
 sensu_config_path: "{{ sensu_config_base_path }}/conf.d"
 sensu_config_file_path: "{{ sensu_config_base_path }}/config.json"
 
-sensu_apt_package: sensu
-sensu_apt_key_url: https://sensu.global.ssl.fastly.net/apt/pubkey.gpg
-sensu_deb_url: deb https://sensu.global.ssl.fastly.net/apt {{ ansible_distribution_release }} main
+sensu_apt_package: "sensu"
+sensu_apt_key_url: "https://sensu.global.ssl.fastly.net/apt/pubkey.gpg"
+sensu_deb_url: "deb https://sensu.global.ssl.fastly.net/apt {{ ansible_distribution_release }} main"
 
-sensu_server_service_name: sensu-server
-sensu_api_service_name: sensu-api
-sensu_client_service_name: sensu-client
+sensu_server_service_name: "sensu-server"
+sensu_api_service_name: "sensu-api"
+sensu_client_service_name: "sensu-client"
 
-sensu_yum_package: sensu
-sensu_rpm_key_url: https://repositories.sensuapp.org/yum/pubkey.gpg
-sensu_rpm_url: https://sensu.global.ssl.fastly.net/yum/$releasever/$basearch/
+sensu_yum_package: "sensu"
+sensu_rpm_key_url: "https://repositories.sensuapp.org/yum/pubkey.gpg"
+sensu_rpm_url: "https://sensu.global.ssl.fastly.net/yum/$releasever/$basearch/"
 
 # Install Sensu and dependencies of Sensu (RabbitMQ, Redis)
 # NOTE: sensu_all_in_one use only in a playbook.

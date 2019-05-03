@@ -10,7 +10,6 @@
       filename: Sensu
       repo: "{{ sensu_deb_url }}"
       state: present
-  #when: "{{ ansible_os_family | lower }} == debian"
   when: ansible_os_family == "Debian"
 
 - block: # RedHat
