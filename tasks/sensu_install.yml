@@ -1,13 +1,10 @@
 ---
-- name: Install sensu packages
+- name: Install sensu and dependencies packages
   apt:
-    name: "{{ item }}"
+    name: "{{ sensu_apt_dependencies + sensu_apt_package }}"
     state: present
     update_cache: yes
-  with_items:
-    - "{{ sensu_apt_package }}"
-    - "{{ sensu_apt_dependencies }}"
-      
+
 - name: Ensure Sensu stay on "Server" mode only
   systemd:
     name: "{{ sensu_client_service_name }}"
